@@ -6,9 +6,11 @@
 2. Paper II: https://arxiv.org/pdf/2203.09755: specific field in the research of hybrid sketching and FHM implementation.\
 
 ***Refenrece Code from R by Pro. Zhang, which is substituted with Using Python and pursues faster speed.\
-1. Paper III: https://github.com/zxzhang23/inference_rand_algo/blob/main/code/inference_hadamard.R\
+1. Paper III: https://github.com/zxzhang23/inference_rand_algo/blob/main/code/inference_hadamard.R
+
 **master1: Pro.Zhang's R code reference in Hadamard Sketching**\
-**master2: My continuous exploration in substituting FHM library in R with faster algorithm in Python**\
+**master2: My continuous exploration in substituting FHM library in R with a faster algorithm in Python**\
+
 ***Possible answer for better algorithm implementation than FHM in R by the phangorn package.\
 
 1. Research Paper IV: https://arxiv.org/abs/2302.11474\
