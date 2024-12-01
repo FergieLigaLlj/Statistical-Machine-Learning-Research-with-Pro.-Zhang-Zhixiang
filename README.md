@@ -2,8 +2,8 @@
 
 ***First file folder: Distributed Sketching for Randomized Optimization in Regression Training.
 1. Paper I: https://arxiv.org/abs/2002.01387: Summary of all kinds of algorithms in randomized numerical linear algebra.
-2. 
-3. Paper II: https://arxiv.org/pdf/2203.09755: specific field in the research of hybrid sketching and FHM implementation.
+
+2. Paper II: https://arxiv.org/pdf/2203.09755: specific field in the research of hybrid sketching and FHM implementation.
 
 ***Refenrece Code from R by Pro. Zhang, which is substituted with Using Python and pursues faster speed.
 1. Paper III: https://github.com/zxzhang23/inference_rand_algo/blob/main/code/inference_hadamard.R
