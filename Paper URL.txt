@@ -2,7 +2,7 @@ summary of randomization
 
 1. https://arxiv.org/abs/2002.01387
 
-specific field in research of hybrid sketching and fhm implementation
+specific field in the research of hybrid sketching and FHM implementation
 
 2. https://arxiv.org/pdf/2203.09755
 
@@ -11,7 +11,7 @@ GitHub Reference Code with R constructing algorithm
 
 3. https://github.com/zxzhang23/inference_rand_algo/blob/main/code/inference_hadamard.R
 
-4. possible answer for better algorithm implementation than fhm in R by the phangorn package
+4. possible answer for better algorithm implementation than FHM in R by the phangorn package
 
 paper: https://arxiv.org/abs/2302.11474
 result page: https://randblas.readthedocs.io/en/stable/tutorial/index.html
