@@ -45,3 +45,7 @@ Esticoef_SRHT(m,c,X,Y,partial=0)
 end_time <- Sys.time()
 elapsed_time <- end_time - start_time
 print(elapsed_time)
+
+
+a = sample(c(1,-1),10,replace=TRUE,prob=c(0.5,0.5))
+print(a)
