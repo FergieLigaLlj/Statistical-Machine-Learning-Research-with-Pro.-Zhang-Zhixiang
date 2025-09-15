@@ -1,4 +1,6 @@
-\documentclass{nejsds}
+\documentclass[11pt]{article} % was \documentclass{nejsds}
+\usepackage{authblk}          % authors/affiliations
+\usepackage{amsthm}           % for \theoremstyle
 \usepackage[T1]{fontenc} % Use T1 font encoding
 \usepackage{lmodern} % Use Latin Modern fonts for better compatibility
 \usepackage{newtxtext} % Use New TX fonts for better font shape support
@@ -6,12 +8,6 @@
 \usepackage{biblatex} %Imports biblatex package
 \usepackage{hyperref}
 \addbibresource{sample.bib} %Import the bibliography file
-
-
-%% manually set first/last pages
-%\firstpage{1}
-%\lastpage{4}
-
 \newtheorem{thm}{Theorem}
 \newtheorem{remark}{Remark}
 \newtheorem{lemma}{Lemma}
@@ -19,25 +15,15 @@
 \theoremstyle{remark}
 \newtheorem{defin}{Definition}
 \hyphenation{de-si-de-rium}
-
-
-\begin{document}
-\begin{frontmatter}
-\pretitle{Research Article}
-
+% ----- title & authors (ARTICLE + AUTHBLK) -----
 \title{The Merits of Randomized Hadamard Transform in Distributed Regression via Partitioned Machines}
+\author[1]{Yishu Yang}
+\affil[1]{Center for Data Science, New York University, New York. \texttt{fergie.yang@nyu.edu}}
 
-\begin{aug}
-\author[a]{\inits{Z.}\fnms{Zhixiang} \snm{Zhang}\thanksref{c1}\ead[label=e1]{zhixzhang@um.edu.mo}}
-\author[b]{\inits{Y.}\fnms{Yishu} \snm{Yang}\thanksref{f1}\ead[label=e2]{dc12828@um.edu.mo}}
-\thankstext[type=corresp,id=c1]{Supervisor.}
-\thankstext[id=f1]{Student.}
-\address[a]{Faculty of Science and Technology, \institution{University of Macau}, \cny{Macau}.\\ \printead{e1}}
-\address[b]{Faculty of Science and Technology, \institution{University of Macau}, \cny{Macau}.\\ \printead{e2}}
-\end{aug}
-
-\dedicated{Dedicated to all researchers in the field.}
-
+\newcommand{\dedicated}[1]{\begin{center}\emph{#1}\end{center}}
+\begin{document}
+\maketitle
+\dedicated{The development of this work is supervised by Prof. Zhixiang Zhang at University of Macau, zhixzhang@um.edu.mo}
 \begin{abstract}
 In the time of large-scale data analysis, distributed sketching has emerged as a pivotal technique for efficiently training linear regression models on massive datasets. This paper examines the relative efficiency of distributed Ordinary Least Squares (OLS) estimation using partitioned machines, with a focus on the impact of various sampling methods. We identify a specific scenario where uniform sampling in distributed sketching leads to a significant decrease in relative efficiency, particularly when the data matrix follows a Gaussian Mixture Model (GMM) characterized by biased variance across different data rows. Our primary contribution lies in demonstrating that the application of the Randomized Hadamard Transform (RHT) before partitioning 
 can substantially enhance the relative efficiency of OLS estimation. By flattening the variance of the local Gram matrices across machines, RHT enables efficient equal-weighted averaging of local OLS estimators, avoiding the need for complex weight adjustments. We rigorously prove that under the condition of sublinear growth of the number of features $p$ concerning the number of samples $n$,
@@ -46,8 +32,6 @@ can substantially enhance the relative efficiency of OLS estimation. By flatteni
 \end{abstract}
 
 \noindent \textbf{Keywords}: Distributed Sketching, Ordinary Least Squares (OLS), Randomized Hadamard Transform (RHT), Partitioned Machines, Relative Efficiency, Gaussian Mixture Model (GMM)
-
-\end{frontmatter}
 
 % Ensure all metadata is properly defined above this line.
 
@@ -1573,9 +1557,7 @@ This implies Lemma~\ref{lem:asymptotic-normality} \eqref{eq:6.6} is satisfied.
 
 \section{Experiental results}
 \subsection{When $n$ and $p$ satisfies Remark~\ref{remark:sublinear}}
-In this section, we will show the comparisons of Randomized Hadamard Transform (RHT) Sampling partitions vs Uniform Sampling partitions in terms of the performance of relative efficiency of the ratio of the global mean-squared error (MSE) of the full-sample estimator to the mean-squared error (MSE) of the distributed estimator with equal-weighted partitions.
-
-Since our theoretical result of the dream efficiency $E = 1$ is achieved only when $n \to \infty$ and $p$ satisfies $\lim_{n \to \infty} \frac{p}{n} = 0$ which could also tends to $\infty$, we will simulate the case that $n=8192$ and $p = 30$ to model this theoretical setting of $p$ satisfies $\lim_{n \to \infty} \frac{p}{n} = 0$ and $n$ is large enough.
+Our theoretical finding ganrantees that the relative efficiency approaches 1 after Randomized Hadamard Transform (RHT) has been applied to the sample data where the row and column dimension $n$ and $p$ satisfies Remark~\ref{remark:sublinear}, we will simulate the case that $n=8192$ and $p = 100$ to model this theoretical setting mainly because $n$ has to be the power of 2 and we could notice that \(\frac{\ln 8192}{100}\approx 0.0901\) and \(\)
 
 The first graph\ref{fig:efficiency_comparison}'s setting is that $c=100$ for fixed inflated ratio and $\boldsymbol{\mu}_2 = (5, 5, \ldots, 5)^{\top} \in \mathbb{R}^{30 \times 1}$ for fixed mean vector of second inflated Cluster. Only the $a_2$ composition proportion is changing and takes the values of $0.01, 0.5, 0.8,$ and $0.99$.
 \begin{figure}[!htbp] % Added '!' to encourage better placement
