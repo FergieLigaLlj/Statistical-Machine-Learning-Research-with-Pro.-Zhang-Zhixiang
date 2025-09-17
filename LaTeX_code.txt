@@ -1,37 +1,127 @@
-\documentclass[11pt]{article} % was \documentclass{nejsds}
-\usepackage{authblk}          % authors/affiliations
-\usepackage{amsthm}           % for \theoremstyle
-\usepackage[T1]{fontenc} % Use T1 font encoding
-\usepackage{lmodern} % Use Latin Modern fonts for better compatibility
-\usepackage{newtxtext} % Use New TX fonts for better font shape support
-\usepackage{amsmath} % Required for \lVert and \rVert
-\usepackage{biblatex} %Imports biblatex package
-\usepackage{hyperref}
-\addbibresource{sample.bib} %Import the bibliography file
-\newtheorem{thm}{Theorem}
-\newtheorem{remark}{Remark}
-\newtheorem{lemma}{Lemma}
-\newtheorem{cor}{Corollary}
+\documentclass[11pt]{article}
+
+% ---------- Fonts & micro-typography ----------
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath} % Times-like text + math (matches the sample feel)
+\usepackage{microtype}
+
+% ---------- Page layout ----------
+\usepackage[margin=1in]{geometry} % 1in margins; adjust if needed
+\usepackage{setspace}
+\setstretch{1.05} % subtle tightening
+
+% ---------- Math & theorems ----------
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\numberwithin{equation}{section}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
 \theoremstyle{remark}
-\newtheorem{defin}{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+% Common operators (optional but tidy)
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Var}{\mathbb{V}\mathrm{ar}}
+\DeclareMathOperator{\Tr}{Tr}
+
+% ---------- Figures, tables, lists ----------
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{caption}
+\captionsetup{labelfont=bf}
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+
+% ---------- Cross-references ----------
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,capitalise,noabbrev]{cleveref}
+
+% ---------- Bibliography (biblatex) ----------
+\usepackage[backend=biber,
+  style=numeric,sorting=nyt,maxnames=10,giveninits=true,
+  doi=true,url=false,eprint=false
+]{biblatex}
+\addbibresource{sample.bib}
+
+% ---------- Authorship block ----------
+\usepackage{authblk}
+\renewcommand\Authfont{\large}
+\renewcommand\Affilfont{\normalsize\normalfont}
+\setlength{\affilsep}{0.5em}
+\renewcommand\Authands{ and }
+
+% ---------- Hyphenation ----------
 \hyphenation{de-si-de-rium}
+
+% ---------- Page styles (journal-like) ----------
+% --- Header (preprint-friendly journal style) ---
+\usepackage{fancyhdr}
+\usepackage{etoolbox} % for \ifstrempty
+% \usepackage[hidelinks]{hyperref} % (make sure hyperref is loaded somewhere)
+
+% Leave these empty for now; fill them later if you get a venue/DOI.
+\newcommand{\journalname}{}     % e.g., "Journal of ..."
+\newcommand{\paperrange}{}      % e.g., "1--17"
+\newcommand{\paperdoi}{}        % e.g., "https://doi.org/...."
+
+% Running heads (edit these two lines)
+\newcommand{\runningtitle}{RHTDistributedRegression}
+\newcommand{\runningauthor}{Yang}
+
+% Header texts (auto-fallbacks)
+\newcommand{\leftheader}{%
+  \ifstrempty{\journalname}{\articletype}{\journalname}%
+}
+\newcommand{\rightheader}{%
+  \ifstrempty{\paperrange}{%
+    \ifstrempty{\paperdoi}{Version:\,\versiondate}{DOI:\,\href{\paperdoi}{\paperdoi}}%
+  }{%
+    \paperrange%
+    \ifstrempty{\paperdoi}{}{ \quad DOI:\,\href{\paperdoi}{\paperdoi}}%
+  }%
+}
+
+\fancypagestyle{firstpage}{%
+  \fancyhf{}
+  \fancyhead[L]{\footnotesize\textsc{\leftheader}}
+  \fancyhead[R]{\footnotesize \rightheader}
+  \renewcommand{\headrulewidth}{0pt}
+}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[LO]{\small\textsc{\runningtitle}}
+\fancyhead[RE]{\small\textsc{\runningauthor}}
+\renewcommand{\headrulewidth}{0.4pt}
+% ---------- Title helpers ----------
+\newcommand{\dedicated}[1]{\par\begin{center}\emph{#1}\end{center}}
+\newcommand{\keywords}[1]{\noindent\textbf{Keywords}: #1}
+
+
+
+
+
 % ----- title & authors (ARTICLE + AUTHBLK) -----
 \title{The Merits of Randomized Hadamard Transform in Distributed Regression via Partitioned Machines}
-\author[1]{Yishu Yang}
-\affil[1]{Center for Data Science, New York University, New York. \texttt{fergie.yang@nyu.edu}}
-
+\author{Yishu Yang}
+\affil{Center for Data Science, New York University, New York. \texttt{fergie.yang@nyu.edu}}
+\date{} % empty (sample had no date)
 \newcommand{\dedicated}[1]{\begin{center}\emph{#1}\end{center}}
 \begin{document}
+\thispagestyle{firstpage}
 \maketitle
 \dedicated{The development of this work is supervised by Prof. Zhixiang Zhang at University of Macau, zhixzhang@um.edu.mo}
+\keywords{Distributed Sketching, Ordinary Least Squares (OLS), Randomized Hadamard Transform (RHT), Partitioned Machines, Relative Efficiency, Gaussian Mixture Model (GMM)}
 \begin{abstract}
 In the time of large-scale data analysis, distributed sketching has emerged as a pivotal technique for efficiently training linear regression models on massive datasets. This paper examines the relative efficiency of distributed Ordinary Least Squares (OLS) estimation using partitioned machines, with a focus on the impact of various sampling methods. We identify a specific scenario where uniform sampling in distributed sketching leads to a significant decrease in relative efficiency, particularly when the data matrix follows a Gaussian Mixture Model (GMM) characterized by biased variance across different data rows. Our primary contribution lies in demonstrating that the application of the Randomized Hadamard Transform (RHT) before partitioning 
 can substantially enhance the relative efficiency of OLS estimation. By flattening the variance of the local Gram matrices across machines, RHT enables efficient equal-weighted averaging of local OLS estimators, avoiding the need for complex weight adjustments. We rigorously prove that under the condition of sublinear growth of the number of features $p$ concerning the number of samples $n$,
  specifically when $\ln n = o(p(n))$ and $p(n)\ln p(n) = o(n)$, the relative efficiency of OLS estimation with equal-weighted partitions after RHT asymptotically approaches the ideal value of 1 as $n$ tends to infinity. 
  This implies that the difference between the trace of the inverse of the local Gram matrix and the trace of the inverse of the scaled global Gram matrix converges to zero at a specific rate. Experimental results corroborate our theoretical findings, highlighting the merits of RHT in achieving the relative efficiency that approaches 1 in distributed OLS regression under the considered data distribution and dimensionality conditions.
 \end{abstract}
-
-\noindent \textbf{Keywords}: Distributed Sketching, Ordinary Least Squares (OLS), Randomized Hadamard Transform (RHT), Partitioned Machines, Relative Efficiency, Gaussian Mixture Model (GMM)
 
 % Ensure all metadata is properly defined above this line.
 
@@ -51,7 +141,7 @@ We could also intepretate this idea differently, that is the difference of $\ope
 In short, we skip the dirty work of adjusting the weight for each local OLS estimator and just take the average of all local OLS estimators with equal weight $\frac{1}{K}$ for $K$ machines by utilizing the Randomized Hadamard Transform (RHT) to flatten the variance of the local gram matrix for each machine.
 
 Our main intuition of randomized hadamard transfrom {RHT} is from the paper of Tropp\cite{tropp2011improvedanalysissubsampledrandomized} and the paper of Cherapanamjeri\cite{cherapanamjeri2022uniformapproximationsrandomizedhadamard}. And we utilize many probability inequalities from the book of Vershynin\cite{vershynin2018high}, the papers of Tropp\cite{tropp2011improvedanalysissubsampledrandomized} and \cite{Tropp_2011}, mainly the Bernstein Inequality of sub-exponential tail bounds and Matrix Chernoff Inequality to prove the result of Corollary~\ref{cor:main}.
-\section{Main Result: Randomized Hadamard Transform on equal partitions for regression training.}
+\section{Main Result: RHT with equal partitions for regression}
 Our main contribution here is that under the research target of Dobriban and Sheng \cite{dobriban2022distributedlinearregressionaveraging} for the finite sampling results of relative efficiency of global OLS estimator to distributed OLS estimator, we focus on
 what kinds of distribution would let uniform sampling partitions decrease the relative efficiency drastically and RHT could help resolve it. (two methods in Remark~\ref{remark:sampling})
 
@@ -200,15 +290,13 @@ In the Appendix of proof of Lemma~\ref{lem:finiteresults}, we noticed that we ha
          {\displaystyle\sum_{j=1}^{K}1/a_j},
       \qquad i=1,\dots,K,\tag{2.6} \label{eq:2.6}
   \]
+\begin{itemize}[leftmargin=*,nosep]
+  \item The Lemma~\ref{lem:concave} here majorly serves as a new perspective because from the Lemma~\ref{lem:concave} \ref{eq:2.6}, it is easy to see that in order to garantee E approach 1 or maximizing E, we need adjust $w_i$ with the value of much difficulty.
+  \item This is because we need to calculate the trace of the inverse of each local gram matrix $\mathbf{M}_i$ and then adjust $w_i$ accordingly.
+  \item Thus our desire here is that we just take $w_i = \frac{1}{K}$ for all $i = 1,2,\ldots,K$ in Lemma~\ref{lem:concave} \ref{eq:2.7} and then we find ways to achieve the dream efficiency of 1 by realizing Lemma~\ref{lem:concave} \ref{eq:2.8}.
+  \item This is why we introduce RHT in this paper and prove it as our main results in Section 4.
+\end{itemize}
 
-  \noindent\(\bigstar\)\;
-  The Lemma~\ref{lem:concave} here majorly serves as a new perspective because from the Lemma~\ref{lem:concave} \ref{eq:2.6}, it is easy to see that in order to garantee E approach 1 or maximizing E, we need adjust $w_i$ with the value of much difficulty.\\[4pt]
-  \noindent\(\bigstar\)\;
-  This is because we need to calculate the trace of the inverse of each local gram matrix $\mathbf{M}_i$ and then adjust $w_i$ accordingly.\\[4pt]
-  \noindent\(\bigstar\)\;
-  Thus our desire here is that we just take $w_i = \frac{1}{K}$ for all $i = 1,2,\ldots,K$ in Lemma~\ref{lem:concave} \ref{eq:2.7} and then we find ways to achieve the dream efficiency of 1 by realizing Lemma~\ref{lem:concave} \ref{eq:2.8}.\\[4pt]
-  \noindent\(\bigstar\)\;
-  This is why we introduce RHT in this paper and prove it as our main results in Section 4.\\[4pt]
 Now with our Lemma~\ref{lem:concave} \ref{eq:2.5}, it is trivial to derive that when we need the relative efficiency to be 1, we need these two conditions:
 
 \[
@@ -1555,14 +1643,14 @@ This implies Lemma~\ref{lem:asymptotic-normality} \eqref{eq:6.6} is satisfied.
 \end{appendix}
 
 
-\section{Experiental results}
+\section{Experimental results}
 \subsection{When $n$ and $p$ satisfies Remark~\ref{remark:sublinear}}
 Our theoretical finding ganrantees that the relative efficiency approaches 1 after Randomized Hadamard Transform (RHT) has been applied to the sample data where the row and column dimension $n$ and $p$ satisfies Remark~\ref{remark:sublinear}, we will simulate the case that $n=8192$ and $p = 100$ to model this theoretical setting mainly because $n$ has to be the power of 2 and we could notice that \(\frac{\ln 8192}{100}\approx 0.0901\) and \(\)
 
 The first graph\ref{fig:efficiency_comparison}'s setting is that $c=100$ for fixed inflated ratio and $\boldsymbol{\mu}_2 = (5, 5, \ldots, 5)^{\top} \in \mathbb{R}^{30 \times 1}$ for fixed mean vector of second inflated Cluster. Only the $a_2$ composition proportion is changing and takes the values of $0.01, 0.5, 0.8,$ and $0.99$.
-\begin{figure}[!htbp] % Added '!' to encourage better placement
+\begin{figure}[tbp] % Added '!' to encourage better placement
   \centering
-  \includegraphics[width=0.5\textwidth]{11.png} % Reduced width
+  \includegraphics[width=.8\linewidth]{11.png} % Reduced width
   \caption{Comparison of Relative Efficiency between RHT Sampling and Uniform Sampling with varying $a_2$ proportion. Settings: $c=100$, $\boldsymbol{\mu}_2 = (5, \ldots, 5)^{\top}$, $p=30$.}
   \label{fig:efficiency_comparison}
 \end{figure}
@@ -1571,9 +1659,9 @@ We could see that only when $a_2$ is as small as $0.01$, the gap of relative eff
 And it is clear that the relative efficiency line after RHT is nearly a straight horizonal line, which matches our theoretical result that the relative efficiency of RHT Sampling is $1$ when $n \to \infty$.
 
 The second graph\ref{fig:efficiency_comparison_2}'s setting is that $a_2=0.2$ for fixed composition proportion and $\boldsymbol{\mu}_2 = (5, 5, \ldots, 5)^{\top} \in \mathbb{R}^{30 \times 1}$ for fixed mean vector of second inflated Cluster. Only the $c$ inflated ratio is changing and takes values of $1$,$10$,$100$,$1000$. 
-\begin{figure}[!htbp] % Added '!' to encourage better placement
+\begin{figure}[tbp] % Added '!' to encourage better placement
   \centering
-  \includegraphics[width=0.5\textwidth]{22.png} % Reduced width
+  \includegraphics[width=.8\linewidth]{22.png} % Reduced width
   \caption{Comparison of Relative Efficiency between RHT Sampling and Uniform Sampling with varying $c$ inflated ratio. Settings: $a_2=0.2$, $\boldsymbol{\mu}_2 = (5, \ldots, 5)^{\top}$, $p=30$.}
   \label{fig:efficiency_comparison_2}
 \end{figure}
@@ -1582,9 +1670,9 @@ We could see that the gap increases drastically when $c$ is increasing drastical
 And it is clear that the relative efficiency line after RHT is nearly a straight horizonal line, which matches our theoretical result that the relative efficiency of RHT Sampling is $1$ when $n \to \infty$.
 
 The third graph\ref{fig:efficiency_comparison_3}'s setting is that $a_2=0.2$ for fixed composition proportion and $c=10$ for fixed inflated ratio. Only the $\boldsymbol{\mu}_2$ mean vector is changing from $(1, 1, \ldots, 1)^{\top}$ to $(1000, 1000, \ldots, 1000)^{\top}$.
-\begin{figure}[!htbp] % Added '!' to encourage better placement
+\begin{figure}[tbp] % Added '!' to encourage better placement
   \centering
-  \includegraphics[width=0.5\textwidth]{33.png} % Reduced width
+  \includegraphics[width=.8\linewidth]{33.png} % Reduced width
   \caption{Comparison of Relative Efficiency between RHT Sampling and Uniform Sampling with varying $\boldsymbol{\mu}_2$ mean vector. Settings: $a_2=0.2$, $c=10$, $p=30$.}
   \label{fig:efficiency_comparison_3}
 \end{figure}
@@ -1595,18 +1683,18 @@ And it is clear that the relative efficiency line after RHT is nearly a straight
 In this case we use the simulation result of $n=8192$ and $p=1000$ to model the case that $p$ is linear growth of $n$.
 And we get these three photos of simulation results of RHT Partition Sampling vs Uniform Partition Sampling, it demonstrates that the merits and effects of Randomized Hadamard Transform (RHT) Sampling is not good as before, the relative efficiency E here is not as close to $1$ as before.
 
-\begin{figure}[!htbp] % Added '!' to encourage better placement
+\begin{figure}[tbp] % Added '!' to encourage better placement
   \centering
-  \includegraphics[width=0.5\textwidth]{1.png} % Reduced width
+  \includegraphics[width=.8\linewidth]{1.png} % Reduced width
   \caption{Comparison of Relative Efficiency between RHT Sampling and Uniform Sampling with varying $a_2$ proportion. Settings: $c=100$, $\boldsymbol{\mu}_2 = (5, \ldots, 5)^{\top}$, $p=1000$.}
-  \label{fig:efficiency_comparison}
+  \label{fig:efficiency_comparison_4}
 \end{figure}
 
-\begin{figure}[!htbp] % Added '!' to encourage better placement
+\begin{figure}[tbp] % Added '!' to encourage better placement
   \centering
-  \includegraphics[width=0.5\textwidth]{2.png} % Reduced width
+  \includegraphics[width=.8\linewidth]{2.png} % Reduced width
   \caption{Comparison of Relative Efficiency between RHT Sampling and Uniform Sampling with varying $c$ inflated ratio. Settings: $a_2=0.2$, $\boldsymbol{\mu}_2 = (5, \ldots, 5)^{\top}$, $p=1000$.}
-  \label{fig:efficiency_comparison_2}
+  \label{fig:efficiency_comparison_5}
 \end{figure}
 
 This is the case that the relative efficiency line after RHT is not approaching a straight horizonal line, which means the relative efficiency of RHT Sampling is not $1$ when $n \to \infty$ and $p$ is linear growth of $n$. This is a reasonable result since the dimension of the data is large enough, and the Randomized Hadamard Transform (RHT) Sampling could not flatten the variance to be evenly distributed.
@@ -1614,18 +1702,5 @@ This is the case that the relative efficiency line after RHT is not approaching 
 We would further focus on the proof of similar main result of Corollary~\ref{cor:main} in the future work, and consider the case that $p$ is comparable to $n$ in the case that $p = c_1 n$ for any constant $c_1$. This is the case $p$ could also tends to infinity when $n$ is tending to infinity with the same level of infinite large. And we would try to use the method of integrated randomized matrix theory as a whole to prove it.
 
 Our current result is conditioned on the distribution of Gaussian Mixture Model (GMM), which is a specific distribtuion and is not a common distribution, this result of merits of Randomzied Hadamard Transform (RHT) should be applied to more general settings of distributions. So we would further explore more general distribtions for RHT Sampling. 
-
-\begin{acknowledgement}[title={Acknowledgments}]
-
-Thank Prof. Zhixiang Zhang, my supervisor.\\
-
-Thank Prof. Zhi Liu, my reference recommender.\\
-
-Thank Prof. Lihu Xu, my reference recommender.\\
-
-Thank all the dedicated researchers in the field of sketching.\\
-
-I love you, my grandma, alive or dead.\\
-\end{acknowledgement}
 \printbibliography %Prints bibliography
 \end{document}
