@@ -1,17 +1,17 @@
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{amsthm}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
 \usepackage{graphicx}
-\usepackage{hyperref}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue]{hyperref}
 \usepackage{listings}
-\usepackage{color}
+\usepackage{xcolor}
 \usepackage{caption}
 \usepackage{float}
-\usepackage{geometry}
-\geometry{a4paper, margin=1in}
+\usepackage[a4paper, margin=1in]{geometry}
+
 \title{Algorithm Improvement Documentation}
 \author{Fergie}
 \date{\today}
@@ -20,50 +20,182 @@
 \maketitle
 
 \section{Introduction}
-This document describes algorithm improvements. This serves the idea why I reason in the simulation of the jupyter notebook \texttt{new\_algorithm.ipynb} that the X\_transformed and X\_transformed\_1 should be the same.
-We first show our scheme here:
+This document summarizes the reasoning employed in \texttt{new\_algorithm.ipynb}, where we argue that $X_{\text{transformed}} = X_{\text{transformed}\_1}$. Our scheme is
 \begin{align*}
-    \tilde{X} &= H^{*} D^{*} X^{*} = (H_{k} \otimes H_{m}) \begin{bmatrix}
-D_1 & 0 & \cdots & 0 \\
-0 & D_2 & \ddots & \vdots \\
-\vdots & \ddots & \ddots & 0 \\
-0 & \cdots & 0 & D_n
-\end{bmatrix} \begin{bmatrix}
-X_{1,\text{loc}} \\
-X_{2,\text{loc}} \\
-\vdots\\
-X_{k,\text{loc}}
-\end{bmatrix}\\
-&= ((H_{k}I_{k})\otimes(I_{m}H_{m}))\begin{bmatrix}
-D_{1}X_{1,\text{loc}} \\
-D_{2}X_{2,\text{loc}} \\
-\vdots\\
-D_{k}X_{k,\text{loc}}
-\end{bmatrix}
-=(H_{k} \otimes I_{m})(I_{k} \otimes H_{m})\begin{bmatrix}
-D_{1}X_{1,\text{loc}} \\
-D_{2}X_{2,\text{loc}} \\
-\vdots\\
-D_{k}X_{k,\text{loc}}
-\end{bmatrix}\\
-&= (H_{k} \otimes I_{m})\begin{bmatrix}
-H_m & 0 & \cdots & 0 \\
-0 & H_m & \ddots & \vdots \\
-\vdots & \ddots & \ddots & 0 \\
-0 & \cdots & 0 & H_m
-\end{bmatrix}_{\text{$k$ blocks}}
+    \tilde{X}
+    &= H^{*} D^{*} X^{*}
+      = (H_k \otimes H_m)
+        \begin{bmatrix}
+            D_1 & 0 & \cdots & 0 \\
+            0 & D_2 & \ddots & \vdots \\
+            \vdots & \ddots & \ddots & 0 \\
+            0 & \cdots & 0 & D_k
+        \end{bmatrix}
+        \begin{bmatrix}
+            X_{1,\text{loc}} \\
+            X_{2,\text{loc}} \\
+            \vdots \\
+            X_{k,\text{loc}}
+        \end{bmatrix} \\
+    &= (H_k I_k \otimes I_m H_m)
+        \begin{bmatrix}
+            D_1 X_{1,\text{loc}} \\
+            D_2 X_{2,\text{loc}} \\
+            \vdots \\
+            D_k X_{k,\text{loc}}
+        \end{bmatrix}
+      = (H_k \otimes I_m)(I_k \otimes H_m)
+        \begin{bmatrix}
+            D_1 X_{1,\text{loc}} \\
+            D_2 X_{2,\text{loc}} \\
+            \vdots \\
+            D_k X_{k,\text{loc}}
+        \end{bmatrix} \\
+    &= (H_k \otimes I_m)
+        \begin{bmatrix}
+            H_m & 0 & \cdots & 0 \\
+            0 & H_m & \ddots & \vdots \\
+            \vdots & \ddots & \ddots & 0 \\
+            0 & \cdots & 0 & H_m
+        \end{bmatrix}_{k \text{ blocks}}
+        \begin{bmatrix}
+            D_1 X_{1,\text{loc}} \\
+            D_2 X_{2,\text{loc}} \\
+            \vdots \\
+            D_k X_{k,\text{loc}}
+        \end{bmatrix} \\
+    &= (H_k \otimes I_m)
+        \begin{bmatrix}
+            H_m D_1 X_{1,\text{loc}} \\
+            H_m D_2 X_{2,\text{loc}} \\
+            \vdots \\
+            H_m D_k X_{k,\text{loc}}
+        \end{bmatrix}.\tag{1}\label{eq:1}
+\end{align*}
+Additionally, inserting a common sampling matrix $S \in \mathbb{R}^{m \times m}$ before each $H_m D_k X_{k,\text{loc}}$ yields
+\begin{align*}
+&(H_k \otimes I_m)
 \begin{bmatrix}
-D_{1}X_{1,\text{loc}} \\
-D_{2}X_{2,\text{loc}} \\
+S H_m D_1 X_{1,\mathrm{loc}}\\
+S H_m D_2 X_{2,\mathrm{loc}}\\
 \vdots\\
-D_{k}X_{k,\text{loc}}
-\end{bmatrix}\\
-&=(H_{k} \otimes I_{m})\begin{bmatrix}
-H_m D_{1}X_{1,\text{loc}} \\
-H_m D_{2}X_{2,\text{loc}} \\
+S H_m D_k X_{k,\mathrm{loc}}
+\end{bmatrix}
+\;=\;
+(H_k \otimes I_m)(I_k\otimes S H_m)
+\begin{bmatrix}
+D_1 X_{1,\mathrm{loc}}\\
+D_2 X_{2,\mathrm{loc}}\\
 \vdots\\
-H_m D_{k}X_{k,\text{loc}}
-\end{bmatrix}\\
+D_k X_{k,\mathrm{loc}}
+\end{bmatrix}
+\\[4pt]
+&= (H_k \otimes I_m)\,(I_k\otimes S)\,(I_k\otimes H_m)
+\begin{bmatrix}
+D_1 X_{1,\mathrm{loc}}\\
+\vdots\\
+D_k X_{k,\mathrm{loc}}
+\end{bmatrix}
+\\[4pt]
+&= (I_k\otimes S)\,(H_k \otimes I_m)\,(I_k\otimes H_m)
+\begin{bmatrix}
+D_1 X_{1,\mathrm{loc}}\\
+\vdots\\
+D_k X_{k,\mathrm{loc}}
+\end{bmatrix}
+\qquad\text{(since }(H_k\otimes I_m)(I_k\otimes S)=(I_k\otimes S)(H_k\otimes I_m)\text{)}
+\\[4pt]
+&= (I_k\otimes S)\,(H_k\otimes H_m)
+\begin{bmatrix}
+D_1 X_{1,\mathrm{loc}}\\
+\vdots\\
+D_k X_{k,\mathrm{loc}}
+\end{bmatrix}
+\\[6pt]
+&=: \; B\,H_{km}\,
+\begin{bmatrix}
+D_1 X_{1,\mathrm{loc}}\\
+\vdots\\
+D_k X_{k,\mathrm{loc}}
+\end{bmatrix},
+\quad
+\text{where } B:=I_k\otimes S,\ \ H_{km}:=H_k\otimes H_m.
+\end{align*}
+\begin{align*}
+&\text{If each client uses its own sampling matrix }S_i\in\mathbb{R}^{m\times m},\ i=1,\dots,k,\text{ then}
+\\[2pt]
+&(H_k \otimes I_m)
+\begin{bmatrix}
+S_1 H_m D_1 X_{1,\mathrm{loc}}\\
+S_2 H_m D_2 X_{2,\mathrm{loc}}\\
+\vdots\\
+S_k H_m D_k X_{k,\mathrm{loc}}
+\end{bmatrix}
+=
+(H_k \otimes I_m)
+\begin{bmatrix}
+S_1 & & \\
+& \ddots & \\
+& & S_k
+\end{bmatrix}
+(I_k \otimes H_m)
+\begin{bmatrix}
+D_1 X_{1,\mathrm{loc}}\\
+\vdots\\
+D_k X_{k,\mathrm{loc}}
+\end{bmatrix}
+\\[4pt]
+&\qquad =
+(H_k \otimes I_m)\,S_{\mathrm{blk}}\,(I_k \otimes H_m)
+\begin{bmatrix}
+D_1 X_{1,\mathrm{loc}}\\
+\vdots\\
+D_k X_{k,\mathrm{loc}}
+\end{bmatrix},
+\quad
+\text{where }
+S_{\mathrm{blk}}
+:=
+\begin{bmatrix}
+S_1 & & \\
+& \ddots & \\
+& & S_k
+\end{bmatrix}.
+\end{align*}
+
+\begin{align*}
+&\text{A single global sampling matrix of the form }B = I_k \otimes S\text{ would require}
+\\[2pt]
+&S_{\mathrm{blk}} = I_k \otimes S
+=
+\begin{bmatrix}
+S & & \\
+& \ddots & \\
+& & S
+\end{bmatrix}.
+\end{align*}
+
+\begin{align*}
+&\text{Thus }S_{\mathrm{blk}} = I_k \otimes S
+\ \Longleftrightarrow\
+S_1 = S_2 = \cdots = S_k = S.
+\end{align*}
+
+\begin{align*}
+&\text{If the }S_i\text{ are not all identical (i.e., }\exists\,i\neq j:\ S_i \neq S_j\text{), then}
+\\[2pt]
+&S_{\mathrm{blk}} \neq I_k \otimes S\ \text{for any }S,
+\quad\text{so we cannot write}
+\\[2pt]
+&(H_k \otimes I_m)S_{\mathrm{blk}}(I_k \otimes H_m)
+= B\,H_{km}\,
+\begin{bmatrix}
+D_1 X_{1,\mathrm{loc}}\\
+\vdots\\
+D_k X_{k,\mathrm{loc}}
+\end{bmatrix}
+\quad
+\text{with a single global }B\text{ of the form }I_k \otimes S.
 \end{align*}
 
 \end{document}
